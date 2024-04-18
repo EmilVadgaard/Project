@@ -19,24 +19,18 @@ public class App extends Application {
     private World world;
     private Group root;
     private Rectangle player;
+    private int factor;
 
     public void displayWalls(){
         for (int y = 0; y < world.yLength(); y++ ){
             for (int x = 0; x < world.xLength(); x++){
                 if (world.getEntity(x,y).getVariant() == Variant.wall){
-                    System.out.print(x + " " + y + ", ");
-                    Rectangle rect = new Rectangle(x*10, y*10, 10, 10);
+                    Rectangle rect = new Rectangle(y*10, x*10, 10, 10);
                     rect.setFill(Color.DARKBLUE);
                     root.getChildren().add(rect);
                 }
             }
         }
-    }
-
-    public void moveCharacter(){
-        world.movePlayerPos(world.playerChar().speed, 0);
-
-        
     }
 
     public void displayCharacter(){
@@ -66,7 +60,8 @@ public class App extends Application {
         new AnimationTimer(){
             public void handle(long currentNanoTime){
                 displayCharacter();
-                moveCharacter();
+                world.movePlayerPos();
+                world.stopMove();
 
                 
             }
@@ -86,19 +81,25 @@ public class App extends Application {
         launch();
     }
 
+    public void CharacterHandling(Direction direction){
+        world.setDesiredDirection(direction);
+        
+    }
+
     public void keyPress(KeyEvent event){
         switch(event.getCode()){
             case UP:
-                //
+                CharacterHandling(Direction.north);
                 break;
             case DOWN:
-                //
+                CharacterHandling(Direction.south);
                 break;
             case LEFT:
-                world.setSpeedPlayer(0.01f);
+                CharacterHandling(Direction.west);
+                
                 break;
             case RIGHT:
-                //
+                CharacterHandling(Direction.east);
                 break;
             default:
                 break;
