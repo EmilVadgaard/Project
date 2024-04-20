@@ -1,0 +1,116 @@
+@startuml
+
+enum Direction {
+    north
+    south
+    east
+    west
+}
+
+enum Variant {
+    wall
+    empty
+    pill
+    cheese
+}
+
+class App {
+    - world: World
+    - root: Group
+    - player: Rectangle
+    - factor: int
+
+    + main ()
+    + characterHandling (direction: Direction)
+    + keyPress (event: KeyEvent)
+}
+
+class World {
+    - grid: Square [][]
+    - playerPos: float []
+    - playerOffsetPos: int []
+    - ghostPos: int []
+    - player: Player
+
+    + World (): World
+    + yLength (): int
+    + xLength (): int
+    + movePlayerPos ()
+    + getPlayerPos (): float []
+    + getEntity (x: int y: int): Entity
+    + setPlayerSpeed (s: float)
+    + setDesiredDirection (direction: Direction)
+    + playerChar (): Character
+    + stopMove ()
+    + legalMove ()
+}
+
+class Square {
+    - entity: Entity
+    - type: int
+
+    + getEntity: Entity
+    + getType: int
+}
+
+abstract class Character {
+    # direction: Direction
+    # speed: float
+
+    + setSpeed (speed: float)
+    + setDirection (direction: Direction)
+    + getSpeed (): float
+}
+
+class Player {
+    # desiredDirection: Direction
+
+    + Player (): Player
+    + setDesiredDirection (direction: Direction)
+    + getDirection (): Direction
+}
+
+class CollisionDetection {
+    {static} + LEGAL_NORTH: int []
+    {static} + LEGAL_SOUTH: int []
+    {static} + LEGAL_WEST: int []
+    {static} + LEGAL_EAST: int []
+
+    {static} + collision (playerX: int playerY: int 
+    {static} ghostX: int ghostY: int): boolean
+    {static} + wallCollide (direction: Direction square: int): boolean
+    {static} + turnableSection (): boolean
+}
+
+abstract class Entity {
+    # variant: Variant
+
+    + getVariant (): Variant
+}
+
+class Wall {
+    # variant: Variant
+
+    + Wall (variant: Variant): Wall
+}
+
+class Empty {
+    # variant: Variant
+
+    + Empty (): Empty
+}
+
+App ..> World
+
+Square +--> World
+World ..> Player
+World ..> Entity
+World ..> CollisionDetection
+
+Player --|> Character
+
+Wall --|> Entity
+Empty --|> Entity
+
+
+@enduml
