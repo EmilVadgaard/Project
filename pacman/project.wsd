@@ -1,0 +1,135 @@
+@startuml Time
+
+enum Direction {
+    north
+    south
+    east
+    west
+}
+
+enum Behavior {
+    cutOffPlayer
+    chasePlayer
+    random
+
+}
+
+class Data {
+    
+}
+
+class App {
+    
+}
+
+abstract class Entity {
+   
+}
+
+class Wall {
+
+}
+
+class Pellet {
+    
+}
+
+class Cheese {
+
+}
+
+interface GameState {
+
+}
+
+class NormalState {
+
+}
+
+class PowerState {
+
+}
+
+class DeathState {
+
+}
+
+abstract class Character{
+    # speed: float
+    # posX: float
+    # posY: float
+    # currentDirection: Direction
+
+    + move (direction: Direction)
+    + getPosX (): float
+    + getPosY (): float
+}
+class Player {
+    # offsetX: int
+    # offsetY: int
+
+    + getOffsetX (): int
+    + getOffsetY (): int
+}
+class Ghost {
+    # behavior: Behavior
+}
+
+class CollisionDetection {
+    {static} + wallCollision (): boolean
+    {static} + entityCollision (): boolean
+    {static} + characterCollision (): boolean
+}
+
+class Game {
+    # player: Player
+    # pink: Ghost
+    # red: Ghost
+    # orange: Ghost
+    # blue: Ghost
+    # map: World
+    # desiredDirection: Direction
+
+    + Game (): Game
+    + setDesiredDirection (direction: Direction)
+}
+class World {
+    # grid: Square [][]
+
+    + World (map: File): World
+    + getEntity (x: int y: int): Entity
+    + getType (x: int y: int): int
+}
+class Square {
+    # entity: Entity
+    # type: int
+
+    - Square (entity: Entity type: Int): Square
+    - getEntity (): Entity
+    - getType (): int
+}
+
+Pellet o--|> Cheese
+
+Pellet ..|> Entity
+Wall ..|> Entity
+
+Character --> GameState
+NormalState ..|> GameState
+PowerState ..|> GameState
+DeathState ..|> GameState
+
+Player o..|> Character
+Ghost o..|> Character
+
+App ..> Game
+App ..> Data
+
+Game ..> Character
+Game ..> World
+Game ..> CollisionDetection
+
+World ..> Entity
+Square +-- World
+
+@enduml
