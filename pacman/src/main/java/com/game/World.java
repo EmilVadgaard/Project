@@ -1,152 +1,103 @@
 package com.game;
 import java.util.Arrays; //Fjern senere
+import java.io.File;
+import java.net.URL;
 
 public class World {
-    private Square[][] grid = new Square[28][32];
-    private float[] playerPos = new float[2];
-    private int[] playerOffsetPos = new int[2];
-    private int[] ghost1 = new int[2];
+    private Grid grid;
     private Player player;
+    private Direction desiredDirection;
 
-    private class Square{
-        Entity entity;
-        int type;
-
-        Square(Entity entity, int type){
-            this.entity = entity;
-            this.type = type;
-
-        }
-
-        public Entity getEntity(){
-            return entity;
-        }
-
-        public int getType(){
-            return type;
-        }
-    }
-    public World(int world) {
+    public World(String filepath) {
+        URL url = this.getClass().getResource("/" + filepath);
+        File map = new File(url.getPath());
+        grid = new Grid(map);
         
+        player = new Player(15,15);
     }
 
-    public World(){
-        // Creates the grid world with walls on all sides.
-        for (int y = 0; y < grid.length; y++ ){
-            for (int x = 0; x < grid[y].length; x++){
-                if (y == 0 || y == grid.length - 1){
-                    grid[y][x] = new Square(new Wall(Variant.wall), 0);
-                } else if (x == 0 || x == grid[y].length - 1) {
-                    grid[y][x] = new Square(new Wall(Variant.wall), 0);
-                } else {
-                    grid[y][x] = new Square(new Empty(), 1);
-                }
-            }
-        }
-        
-        // Sets the players starting positon
-        playerPos[0] = 15;
-        playerPos[1] = 15;
-
-        player = new Player();
+    public float getPlayerPosX() {
+        return player.getPosX();
     }
 
-    public int yLength(){
-        return grid.length;
-    }
-    
-    public int xLength(){
-        return grid[0].length;
+    public float getPlayerPosY() {
+        return player.getPosY();
     }
 
-    public void movePlayerPos(){
-        switch (player.getDesiredDirection()) {
-            //collisiondetection
-            case north:
-                playerPos[1] -= player.getSpeed();
-                // playerOffsetPos[0] = (int) Math.floor(playerPos[0]);
-                // playerOffsetPos[1] = Math.round(playerPos[1]);
-                break;
-            case south:
-                playerPos[1] += player.getSpeed();
-                // playerOffsetPos[0] = (int) Math.ceil(playerPos[0]);
-                // playerOffsetPos[1] = Math.round(playerPos[1]);
-                break;
-            case east:
-                playerPos[0] += player.getSpeed();
-                // playerOffsetPos[1] = (int) Math.ceil(playerPos[1]);
-                // playerOffsetPos[0] = Math.round(playerPos[0]);
-                break;
-            case west:
-                playerPos[0] -= player.getSpeed();
-                // playerOffsetPos[1] = (int) Math.floor(playerPos[1]);
-                // playerOffsetPos[0] = Math.round(playerPos[0]);
-                break;
-            default:
-                break;
-           
-        }
-
-    }
-
-    public float[] getPlayerPos(){
-        return playerPos;
-    }
-    
     public Entity getEntity(int x, int y) {
-        return grid[y][x].getEntity();
+        return grid.getEntity(x,y);
     }
 
-    public void setSpeedPlayer(float s){
+    public Variant getVariant(int x, int y) {
+        return grid.getEntity(x,y).getVariant();
+    }
+
+    public int yLength() {
+        return grid.getYLength();
+    }
+
+    public int xLength() {
+        return grid.getXLength();
+    }
+
+    public void setSpeedPlayer(float s) {
         player.setSpeed(s);
     }
 
-    public void setDesiredDirection(Direction direction){
-        player.setDesiredDirection(direction);
-        if (player.getSpeed() == 0){
-            player.setSpeed(0.075f);
+    public void setDesiredDirection(Direction direction) {
+        desiredDirection = direction;
+
+        //placeholder
+        setPlayerDirection();
+    }
+
+    public void setPlayerDirection() {
+        player.setDirection(desiredDirection);
+    }
+
+    public void movePlayerPos() {
+        player.move();
+    }
+
+    public void stopMove() {
+        int offset;
+        switch (player.getDirection()) {
+
+            case north:
+                offset = (int) Math.floor(player.getPosY() - player.getSpeed());
+                break;
+            case south:
+                offset = (int) Math.ceil(player.getPosY() + player.getSpeed() + 1);
+                break;
+            case east:
+                offset = (int) Math.floor(player.getPosX() + player.getSpeed() + 1);
+                break;
+            case west:
+                offset = (int) Math.ceil(player.getPosX() - player.getSpeed());
+                break;
+            default:
+                offset = 0;
+                break;
         }
-    }
-
-    public Character playerChar(){
-        return player;
-    }
-
-
-    public void stopMove(){
-        Direction playerDirection = player.getDesiredDirection();
-        int selectedSquare;
         
-        // if (playerDirection == Direction.south){
-        //     selectedSquare = grid[playerOffsetPos[0]][playerOffsetPos[1]+1].getType();
-        // } else if (playerDirection == Direction.east){
-        //     selectedSquare = grid[playerOffsetPos[0]+1][playerOffsetPos[1]].getType();
-        // } else {
-        //     selectedSquare = grid[playerOffsetPos[0]-1][playerOffsetPos[1]-1].getType();
-        // }
-        
+        Variant variant = grid.getEntity(offset, (int) player.getPosX()).getVariant();
 
-        if (CollisionDetection.wallCollide(playerDirection, playerPos)){
-            player.setDirection(player.getDesiredDirection());
+        if (CollisionDetection.isWall(variant)){
             player.setSpeed(0);
-            
-            // playerPos[0] = playerOffsetPos[0];
-            // playerPos[1] = playerOffsetPos[1];
+            //player.addPosition();
         }
     }
 
-    public Variant getVariant(int X, int Y){
-        return grid[X][Y].getEntity().getVariant();
-    }
 
-    public void legalMove(){
-        if (CollisionDetection.turnableSection(playerPos, playerOffsetPos, player.getDesiredDirection(), grid[playerOffsetPos[0]][playerOffsetPos[1]].type)){
-            player.setDirection(player.getDesiredDirection());
-            playerPos[0] = playerOffsetPos[0];
-            playerPos[1] = playerOffsetPos[1];
 
-        }
-    }
+    // public void legalMove(){
+    //     if (CollisionDetection.turnableSection(playerPos, playerOffsetPos, player.getDesiredDirection(), grid[playerOffsetPos[0]][playerOffsetPos[1]].type)){
+    //         player.setDirection(player.getDesiredDirection());
+    //         playerPos[0] = playerOffsetPos[0];
+    //         playerPos[1] = playerOffsetPos[1];
+
+    //     }
+    // }
 
     
 

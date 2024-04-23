@@ -18,22 +18,29 @@ public class CollisionDetection {
             return false;
         }
     }
-    
-    public static boolean wallCollide(Direction direction, int[] pos) {
-        switch(direction)  {
-            case north:
-                if (Math.round(pos[0]))
-                // return Arrays.binarySearch(LEGAL_NORTH, square) < 0;
-            case south:
-                return Arrays.binarySearch(LEGAL_SOUTH, square) < 0;
-            case east:
-                return Arrays.binarySearch(LEGAL_EAST, square) < 0;
-            case west:
-                return Arrays.binarySearch(LEGAL_WEST, square) < 0;
-            default:
-                return false;         
+
+    public static boolean isWall(Variant variant){
+        if (variant == Variant.wall){
+            return true;
         }
+        return false;
     }
+    
+    // public static boolean wallCollide(Direction direction, int[] pos) {
+    //     switch(direction)  {
+    //         case north:
+    //             if (Math.round(pos[0]))
+    //             // return Arrays.binarySearch(LEGAL_NORTH, square) < 0;
+    //         case south:
+    //             return Arrays.binarySearch(LEGAL_SOUTH, square) < 0;
+    //         case east:
+    //             return Arrays.binarySearch(LEGAL_EAST, square) < 0;
+    //         case west:
+    //             return Arrays.binarySearch(LEGAL_WEST, square) < 0;
+    //         default:
+    //             return false;         
+    //     }
+    // }
 
     public static boolean turnableSection(float[] playerPos, int[] playerOffsetPos, Direction desiredDirection, int square){
         if (playerPos[0] > (playerOffsetPos[0] + 0.5) && playerPos[0] < (playerOffsetPos[0] - 0.5) && playerPos[1] < (playerOffsetPos[1] - 0.5) && playerPos[1] > (playerOffsetPos[1] + 0.5) ) {
