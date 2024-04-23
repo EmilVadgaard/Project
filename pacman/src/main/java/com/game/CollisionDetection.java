@@ -19,10 +19,11 @@ public class CollisionDetection {
         }
     }
     
-    public static boolean wallCollide(Direction direction, int square) {
+    public static boolean wallCollide(Direction direction, int[] pos) {
         switch(direction)  {
             case north:
-                return Arrays.binarySearch(LEGAL_NORTH, square) < 0;
+                if (Math.round(pos[0]))
+                // return Arrays.binarySearch(LEGAL_NORTH, square) < 0;
             case south:
                 return Arrays.binarySearch(LEGAL_SOUTH, square) < 0;
             case east:

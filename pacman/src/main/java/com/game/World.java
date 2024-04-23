@@ -64,33 +64,28 @@ public class World {
             //collisiondetection
             case north:
                 playerPos[1] -= player.getSpeed();
-                playerOffsetPos[0] = (int) Math.floor(playerPos[0]);
-                playerOffsetPos[1] = Math.round(playerPos[1]);
+                // playerOffsetPos[0] = (int) Math.floor(playerPos[0]);
+                // playerOffsetPos[1] = Math.round(playerPos[1]);
                 break;
             case south:
                 playerPos[1] += player.getSpeed();
-                playerOffsetPos[0] = (int) Math.ceil(playerPos[0]);
-                playerOffsetPos[1] = Math.round(playerPos[1]);
+                // playerOffsetPos[0] = (int) Math.ceil(playerPos[0]);
+                // playerOffsetPos[1] = Math.round(playerPos[1]);
                 break;
             case east:
                 playerPos[0] += player.getSpeed();
-                playerOffsetPos[1] = (int) Math.ceil(playerPos[1]);
-                playerOffsetPos[0] = Math.round(playerPos[0]);
+                // playerOffsetPos[1] = (int) Math.ceil(playerPos[1]);
+                // playerOffsetPos[0] = Math.round(playerPos[0]);
                 break;
             case west:
                 playerPos[0] -= player.getSpeed();
-                playerOffsetPos[1] = (int) Math.floor(playerPos[1]);
-                playerOffsetPos[0] = Math.round(playerPos[0]);
+                // playerOffsetPos[1] = (int) Math.floor(playerPos[1]);
+                // playerOffsetPos[0] = Math.round(playerPos[0]);
                 break;
             default:
                 break;
            
         }
-
-        /*
-        playerOffsetPos[0] = Math.round(playerPos[0]);
-        playerOffsetPos[1] = Math.round(playerPos[1]);
-        */
 
     }
 
@@ -122,22 +117,26 @@ public class World {
         Direction playerDirection = player.getDesiredDirection();
         int selectedSquare;
         
-        if (playerDirection == Direction.south){
-            selectedSquare = grid[playerOffsetPos[0]][playerOffsetPos[1]+1].getType();
-        } else if (playerDirection == Direction.east){
-            selectedSquare = grid[playerOffsetPos[0]+1][playerOffsetPos[1]].getType();
-        } else {
-            selectedSquare = grid[playerOffsetPos[0]-1][playerOffsetPos[1]-1].getType();
-        }
+        // if (playerDirection == Direction.south){
+        //     selectedSquare = grid[playerOffsetPos[0]][playerOffsetPos[1]+1].getType();
+        // } else if (playerDirection == Direction.east){
+        //     selectedSquare = grid[playerOffsetPos[0]+1][playerOffsetPos[1]].getType();
+        // } else {
+        //     selectedSquare = grid[playerOffsetPos[0]-1][playerOffsetPos[1]-1].getType();
+        // }
         
 
-        if (CollisionDetection.wallCollide(playerDirection , selectedSquare)){
+        if (CollisionDetection.wallCollide(playerDirection, playerPos)){
             player.setDirection(player.getDesiredDirection());
             player.setSpeed(0);
             
-            playerPos[0] = playerOffsetPos[0];
-            playerPos[1] = playerOffsetPos[1];
+            // playerPos[0] = playerOffsetPos[0];
+            // playerPos[1] = playerOffsetPos[1];
         }
+    }
+
+    public Variant getVariant(int X, int Y){
+        return grid[X][Y].getEntity().getVariant();
     }
 
     public void legalMove(){
